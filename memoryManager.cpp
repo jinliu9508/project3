@@ -1,8 +1,9 @@
 /*
 CMPSC 473
 Project 3
-Team: Ghunley Zhang, Jinwei Liu
+Team: Jinwei Liu, Ghunley Zhang
 
+Date modified: 4/28/2017
 */
 
 #include "memoryManager.h"
@@ -37,7 +38,7 @@ unsigned long long memoryManager::memoryAccess(unsigned long long address) {
 				// place the page in frames
 				frame_i->address = address;
 				order.push_back((unsigned int)frame_i->framePosition);		// store the position
-				cout << "\t**" << address << " is stored at frame " << frame_i->framePosition << endl;
+				//cout << "\t**" << address << " is stored at frame " << frame_i->framePosition << endl;
 				return frame_i->framePosition;
 			}
 			frame_i++;
@@ -54,11 +55,11 @@ unsigned long long memoryManager::memoryAccess(unsigned long long address) {
 		pos++;
 	}
 	
+	// hit, do not need to swap
 	if (pos != order.end()) {
-		// hit, do not need to swap
 		// update least recent used since this frame has just been referenced
 		unsigned int framePos = *pos;
-		cout << "\t**" << address << " hits, stored at frame " << framePos << endl;
+		//cout << "\t**" << address << " hits, stored at frame " << framePos << endl;
 
 		if (policy == LRU) {
 			unsigned int orderPos;
@@ -75,26 +76,25 @@ unsigned long long memoryManager::memoryAccess(unsigned long long address) {
 		}
 
 
-		return framePos;
+		return frames[framePos].framePosition;
 	}
-	else {
-		// miss, swap
-		unsigned int posToBeSwapped = order.front();
-		cout << "\t**" << address << " misses, swap to frame " << posToBeSwapped << endl;
-		swap(order.front(), address);
 
-		order.erase(order.begin());
-		order.push_back(posToBeSwapped);
+	// miss, swap
+	unsigned int posToBeSwapped = order.front();
+	//cout << "\t**" << address << " misses, swap to frame " << posToBeSwapped << endl;
+	swap(order.front(), address);
 
-		/*
-		// print order
-		for (unsigned int i = 0; i < numFrames; i++){
-			cout << order[i] << " ";
-		}
-		cout << endl;
-		*/
-		return posToBeSwapped;
+	order.erase(order.begin());
+	order.push_back(posToBeSwapped);
+
+	/*
+	// print order
+	for (unsigned int i = 0; i < numFrames; i++){
+	cout << order[i] << " ";
 	}
+	cout << endl;
+	*/
+	return frames[posToBeSwapped].framePosition;
 	
 }
 
@@ -102,7 +102,7 @@ unsigned long long memoryManager::memoryAccess(unsigned long long address) {
 void memoryManager::swap(unsigned int frameNumber, unsigned int pageNumber) {
 	frames[frameNumber].address = pageNumber;
 	numSwaps++;
-	cout << "\t\tnumswap: " << numSwaps << "\n";
+	//cout << "\t\tnumswap: " << numSwaps << "\n";
 }
 unsigned long long& memoryManager::numberPageSwaps() {
 	return numSwaps;
