@@ -1,15 +1,15 @@
+#pragma once
 #include "virtualMemoryManagerInterface.hpp"
 #include <vector>
 
 typedef struct {
-	unsigned int framePosition;
+	unsigned long long framePosition;
 	unsigned long long address;
 } Frame;
 
 class memoryManager : public virtualMemoryManagerInterface {
 public:
-	memoryManager(ReplacementPolicy p, unsigned int pS, unsigned int nF, unsigned int vA)
-		: virtualMemoryManagerInterface(p, pS, nF, vA){};		// constructor
+	memoryManager(ReplacementPolicy p, unsigned int pS, unsigned int nF, unsigned int vA);		// constructor
 	~memoryManager();		// destructor
 
 	vector<Frame> frames;		// store virtual memory addresses
